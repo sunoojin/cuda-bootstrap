@@ -1,0 +1,31 @@
+# ─── 컴파일 바이너리 (CUDA/C++) ───────────────────────────────
+cuda/stage1_naive
+cuda/stage2_block
+cuda/stage3_fp32_curand4
+cuda/stage4a_ldg
+cuda/stage5_multistream
+*.o
+*.a
+*.so
+*.out
+
+# ─── 데이터 파일 (용량 크고 재생성 가능) ────────────────────────
+*.bin
+
+# ─── Python ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+
+# ─── 벤치마크 결과 (선택: 올리고 싶으면 이 줄 삭제) ─────────────
+# benchmark/results/
+
+# ─── OS / IDE ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
