@@ -6,7 +6,7 @@
 
 시계열 Sharpe ratio significance test를 위한 Stationary Block Bootstrap
 (Politis & Romano 1994)의 CUDA 구현.
-CPU(numpy) baseline 대비 단계별 최적화로 **XXx speedup** 달성.
+CPU(numpy) baseline 대비 단계별 최적화로 **131,386x speedup** 달성.
 
 > 실제 측정값은 `benchmark/results/sweep_20260505_014802.txt` 참고.
 
@@ -22,14 +22,13 @@ CPU(numpy) baseline 대비 단계별 최적화로 **XXx speedup** 달성.
 | Stage | 구현                | 핵심 기법                | 실측 speedup |
 | ----- | ------------------- | ------------------------ | ------------ |
 | 0     | CPU numpy baseline  | —                        | 1.0x         |
-| 0-mp  | CPU multiprocessing | Python multiprocessing   | Xx           |
-| 1     | Naive CUDA          | 1 thread / permutation   | Xx           |
-| 2     | Block-level         | 1 block / permutation    | Xx           |
-| 3     | FP32 + cuRAND4      | float4 벡터 로드, cuRAND | Xx           |
-| 4a    | LDG                 | `__ldg()` 읽기 캐시      | Xx           |
-| 5     | Multi-stream        | CUDA 스트림 파이프라인   | Xx           |
+| 0-mp  | CPU multiprocessing | Python multiprocessing   | 28.86x       |
+| 1     | Naive CUDA          | 1 thread / permutation   | 10,453x      |
+| 2     | Block-level         | 1 block / permutation    | 38,397x      |
+| 3     | FP32 + cuRAND4      | float4 벡터 로드, cuRAND | 131,386x      |
+| 4a    | LDG                 | `__ldg()` 읽기 캐시      | 131,210x      |
+| 5     | Multi-stream        | CUDA 스트림 파이프라인   | -           |
 
-> **TODO**: 벤치마크 결과값으로 `Xx` 채워주세요.
 
 ## 데이터
 
@@ -42,52 +41,29 @@ CPU(numpy) baseline 대비 단계별 최적화로 **XXx speedup** 달성.
 
 ```
 cuda_bootstrap/
-
 ├── README.md
-
-├── fetch_sp500.py          # S&P 500 데이터 수집
-
-├── python_wrapper.py       # CUDA 커널 Python 인터페이스
-
-├── demo_run.sh             # 빠른 실행 데모
-
-├── measure_sp500.sh        # S&P 500 벤치마크
-
-├── sweep_sp500_n.sh        # N 스윕 실험
-
-├── baseline/               # CPU 참조 구현
-
-│   ├── bootstrap_cpu.py    # numpy 단일 프로세스
-
-│   └── bootstrap_cpu_mp.py # multiprocessing 버전
-
-├── cuda/                   # CUDA 커널 단계별 구현
-
+├── fetch_sp500.py
+├── python_wrapper.py
+├── demo_run.sh
+├── measure_sp500.sh
+├── sweep_sp500_n.sh
+├── baseline/
+│   ├── bootstrap_cpu.py
+│   └── bootstrap_cpu_mp.py
+├── cuda/
 │   ├── Makefile
-
 │   ├── stage1_naive.cu
-
 │   ├── stage2_block.cu
-
 │   ├── stage3_fp32_curand4.cu
-
 │   ├── stage4a_ldg.cu
-
 │   └── stage5_multistream.cu
-
-└── benchmark/              # 성능 측정
-
-├── run_bench.py
-
-├── sweep.sh
-
-├── polling_solo.sh
-
-├── validate_ks.py
-
-└── results/
-
-└── sweep_20260505_014802.txt
+└── benchmark/
+    ├── run_bench.py
+    ├── sweep.sh
+    ├── polling_solo.sh
+    ├── validate_ks.py
+    └── results/
+        └── sweep_20260505_014802.txt
 ```
 
 ## 빠른 시작
@@ -121,6 +97,14 @@ bash benchmark/sweep.sh
 
 - 실행/프로파일: RTX A6000 (CUDA 12.x, Nsight Compute)
 - 개발: macOS (VSCode + Remote-SSH)
+
+## 팀원
+
+| 이름 | 학번 |
+|------|------|
+| 김범주 | 2021111932 |
+| 오정인 | 2023112397 |
+
 
 ## 참고 문헌
 
